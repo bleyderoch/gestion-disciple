@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}{{ d.nom_complet }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+  <h2><i class="bi bi-person-vcard"></i> {{ d.nom_complet }} <small class="text-muted">{{ d.matricule }}</small></h2>
+  <div>
+    <a href="{{ url_for('disciple_form', disciple_id=d.id) }}" class="btn btn-outline-primary"><i class="bi bi-pencil"></i> Modifier</a>
+    <a href="{{ url_for('disciples_list') }}" class="btn btn-outline-secondary">← Retour</a>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Informations personnelles</h5>
+        <dl class="row mb-0 small">
+          <dt class="col-sm-4">Téléphone</dt><dd class="col-sm-8">{{ d.tel or '—' }}</dd>
+          <dt class="col-sm-4">Lieu d'habitation</dt><dd class="col-sm-8">{{ d.lieu_habitation or '—' }}</dd>
+          <dt class="col-sm-4">Plan du domicile</dt>
+          <dd class="col-sm-8">{% if d.lien_plan_domicile %}<a href="{{ d.lien_plan_domicile }}" target="_blank">Ouvrir le lien</a>{% else %}—{% endif %}</dd>
+          <dt class="col-sm-4">Zone</dt><dd class="col-sm-8">{{ d.zone or '—' }}</dd>
+          <dt class="col-sm-4">Sous-centre</dt><dd class="col-sm-8">{{ d.sous_centre or '—' }}</dd>
+          <dt class="col-sm-4">Assemblée</dt><dd class="col-sm-8">{{ d.assemblee or '—' }}</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Encadrement</h5>
+        <dl class="row mb-0 small">
+          <dt class="col-sm-5">Faiseur de disciple</dt>
+          <dd class="col-sm-7">{{ d.faiseur_nom or '—' }}{% if d.faiseur_contact %} ({{ d.faiseur_contact }}){% endif %}</dd>
+          <dt class="col-sm-5">Mentore</dt>
+          <dd class="col-sm-7">
+            {% if d.mentore_nom %}
+              {{ d.mentore_nom }} {{ d.mentore_prenom }}
+              {% if d.mentore_tel %} — {{ d.mentore_tel }}{% endif %}
+              {% if d.mentore_qualite %} <span class="badge badge-qualite">{{ d.mentore_qualite }}</span>{% endif %}
+            {% else %}—{% endif %}
+          </dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Statut spirituel</h5>
+        <p class="mb-0">
+          {% if d.repentance %}<span class="badge bg-success">Repentance</span>{% else %}<span class="badge bg-light text-muted">Repentance</span>{% endif %}
+          {% if d.bapteme %}<span class="badge bg-info">Baptême{% if d.date_bapteme %} ({{ d.date_bapteme.strftime('%d/%m/%Y') }}){% endif %}</span>{% else %}<span class="badge bg-light text-muted">Baptême</span>{% endif %}
+          {% if d.brisement_liens %}<span class="badge bg-warning">Brisement de liens</span>{% else %}<span class="badge bg-light text-muted">Brisement</span>{% endif %}
+          {% if d.formation_disciple %}<span class="badge bg-primary">Formation</span>{% else %}<span class="badge bg-light text-muted">Formation</span>{% endif %}
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Niveau académique</h5>
+        <p class="mb-1"><strong>{{ d.niveau_academique or '—' }}</strong></p>
+        <p class="text-muted small mb-1">{{ d.details_niveau or '' }}</p>
+        {% if d.lien_cv %}<a href="{{ d.lien_cv }}" target="_blank" class="small">Voir le CV</a>{% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Amis proches ({{ d.amis.count() }}/10)</h5>
+        <ol class="mb-0 small">
+          {% for a in d.amis %}
+            <li>{{ a.nom_prenoms }}{% if a.tel %} — {{ a.tel }}{% endif %}{% if a.lieu_habitation %} — {{ a.lieu_habitation }}{% endif %}</li>
+          {% else %}<li class="text-muted">Aucun ami enregistré.</li>{% endfor %}
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Familles proches ({{ d.familles.count() }}/5)</h5>
+        <ol class="mb-0 small">
+          {% for f in d.familles %}
+            <li>{{ f.nom_famille }}{% if f.tel %} — {{ f.tel }}{% endif %}{% if f.lieu_habitation %} — {{ f.lieu_habitation }}{% endif %}</li>
+          {% else %}<li class="text-muted">Aucune famille enregistrée.</li>{% endfor %}
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Assiduité aux adorations du dimanche</h5>
+        <p>{{ nb_presences }} présences sur {{ total_ad }} dimanches enregistrés — <strong>{{ taux_presence }} %</strong></p>
+        {% if adorations %}
+        <div class="table-responsive">
+          <table class="table table-sm">
+            <thead><tr><th>Date</th><th>Semaine</th><th>Présence</th></tr></thead>
+            <tbody>
+              {% for a in adorations %}
+              <tr>
+                <td>{{ a.date_dimanche.strftime('%d/%m/%Y') }}</td>
+                <td>S{{ a.numero_semaine }}</td>
+                <td>
+                  {% if a.present %}<span class="badge bg-success">Présent</span>
+                  {% else %}<span class="badge bg-danger">Absent</span>{% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Évangélistes{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+  <h2><i class="bi bi-megaphone"></i> Évangélistes</h2>
+  <a href="{{ url_for('evangeliste_form') }}" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Nouvel évangéliste</a>
+</div>
+
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr><th>Nom complet</th><th>Tél.</th><th>Zone</th><th>Sous-centre</th><th>Assemblée</th><th>Qualité</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for e in evangelistes %}
+        <tr>
+          <td><strong>{{ e.nom_complet }}</strong></td>
+          <td>{{ e.tel or '—' }}</td>
+          <td>{{ e.zone or '—' }}</td>
+          <td>{{ e.sous_centre or '—' }}</td>
+          <td>{{ e.assemblee or '—' }}</td>
+          <td>{% if e.qualite %}<span class="badge badge-qualite">{{ e.qualite }}</span>{% else %}—{% endif %}</td>
+          <td class="text-end">
+            <a href="{{ url_for('evangeliste_form', evangeliste_id=e.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+            <form action="{{ url_for('evangeliste_delete', evangeliste_id=e.id) }}" method="post" class="d-inline" onsubmit="return confirm('Supprimer {{ e.nom_complet }} ?');">
+              <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-center text-muted py-4">Aucun évangéliste enregistré.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{% if r %}Modifier{% else %}Nouveau{% endif %} RDV{% endblock %}
+{% block content %}
+<h2 class="mb-3"><i class="bi bi-calendar-plus"></i> {% if r %}Modifier le RDV{% else %}Nouveau RDV d'évangélisation{% endif %}</h2>
+
+<form method="post">
+  <div class="card shadow-sm mb-3">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6"><label class="form-label">Évangéliste *</label>
+          <select class="form-select" name="evangeliste_id" required>
+            <option value="">—</option>
+            {% for e in evangelistes %}
+            <option value="{{ e.id }}" {% if r and r.evangeliste_id == e.id %}selected{% endif %}>{{ e.nom_complet }}</option>
+            {% endfor %}
+          </select></div>
+        <div class="col-md-3"><label class="form-label">Année *</label>
+          <input type="number" class="form-control" name="annee" value="{{ r.annee if r else annee_defaut }}" required></div>
+        <div class="col-md-3"><label class="form-label">N° semaine *</label>
+          <input type="number" class="form-control" name="numero_semaine" min="1" max="53" value="{{ r.numero_semaine if r else semaine_defaut }}" required></div>
+        <div class="col-md-3"><label class="form-label">Jour</label>
+          <select class="form-select" name="jour">
+            <option value="">—</option>
+            {% for j in ['L','M','Mc','J','V','S','D'] %}
+            <option value="{{ j }}" {% if r and r.jour == j %}selected{% endif %}>{{ j }}</option>
+            {% endfor %}
+          </select></div>
+        <div class="col-md-3"><label class="form-label">Heure</label>
+          <input type="time" class="form-control" name="heure" value="{{ r.heure if r else '' }}"></div>
+        <div class="col-md-3"><label class="form-label">Type d'âme</label>
+          <select class="form-select" name="type_ame">
+            <option value="">—</option>
+            {% for t in ['Ami','Famille'] %}
+            <option value="{{ t }}" {% if r and r.type_ame == t %}selected{% endif %}>{{ t }}</option>
+            {% endfor %}
+          </select></div>
+        <div class="col-md-3"><label class="form-label">Lieu du RDV</label>
+          <input class="form-control" name="lieu_rdv" value="{{ r.lieu_rdv if r else '' }}"></div>
+        <div class="col-md-6"><label class="form-label">Nom de l'âme *</label>
+          <input class="form-control" name="nom_ame" required value="{{ r.nom_ame if r else '' }}"></div>
+        <div class="col-md-6"><label class="form-label">Tél. de l'âme</label>
+          <input class="form-control" name="tel_ame" value="{{ r.tel_ame if r else '' }}"></div>
+        <div class="col-md-6"><label class="form-label">Statut RDV</label>
+          <select class="form-select" name="statut_rdv">
+            <option value="NOK" {% if r and r.statut_rdv == 'NOK' %}selected{% endif %}>NOK (non réalisé)</option>
+            <option value="OK"  {% if r and r.statut_rdv == 'OK'  %}selected{% endif %}>OK (réalisé)</option>
+          </select></div>
+        <div class="col-md-6"><label class="form-label">Statut engagement</label>
+          <select class="form-select" name="statut_engagement">
+            <option value="NOK" {% if r and r.statut_engagement == 'NOK' %}selected{% endif %}>NOK (pas d'engagement)</option>
+            <option value="OK"  {% if r and r.statut_engagement == 'OK'  %}selected{% endif %}>OK (engagement obtenu)</option>
+          </select></div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex gap-2 justify-content-end">
+    <a href="{{ url_for('planning_list') }}" class="btn btn-outline-secondary">Annuler</a>
+    <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Enregistrer</button>
+  </div>
+</form>
+{% endblock %}

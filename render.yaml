@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: gestion-disciple
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: APP_USERNAME
+        value: assemblee
+      - key: APP_PASSWORD
+        value: assemblee2026
+      - key: PYTHON_VERSION
+        value: 3.11.9

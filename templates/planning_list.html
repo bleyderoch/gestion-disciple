@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Planning{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+  <h2><i class="bi bi-calendar-week"></i> Planning d'évangélisation <small class="text-muted">S{{ semaine }} — {{ annee }}</small></h2>
+  <a href="{{ url_for('rdv_form') }}" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Nouveau RDV</a>
+</div>
+
+<form method="get" class="card card-body shadow-sm mb-3">
+  <div class="row g-2 align-items-end">
+    <div class="col-md-2"><label class="form-label small">Année</label>
+      <input type="number" name="annee" class="form-control" value="{{ annee }}"></div>
+    <div class="col-md-2"><label class="form-label small">Semaine</label>
+      <input type="number" name="semaine" class="form-control" min="1" max="53" value="{{ semaine }}"></div>
+    <div class="col-md-4"><label class="form-label small">Évangéliste</label>
+      <select class="form-select" name="evangeliste_id">
+        <option value="">Tous</option>
+        {% for e in evangelistes %}
+        <option value="{{ e.id }}" {% if evangeliste_id == e.id|string %}selected{% endif %}>{{ e.nom_complet }}</option>
+        {% endfor %}
+      </select></div>
+    <div class="col-md-4"><button class="btn btn-outline-primary">Filtrer</button></div>
+  </div>
+</form>
+
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Évangéliste</th><th>Jour</th><th>Heure</th>
+          <th>Âme</th><th>Type</th><th>Tél.</th><th>Lieu</th>
+          <th>RDV</th><th>Engagement</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rdvs %}
+        <tr>
+          <td><strong>{{ r.evangeliste.nom_complet }}</strong></td>
+          <td>{{ r.jour }}</td>
+          <td>{{ r.heure or '—' }}</td>
+          <td>{{ r.nom_ame }}</td>
+          <td><span class="badge bg-secondary">{{ r.type_ame or '—' }}</span></td>
+          <td>{{ r.tel_ame or '—' }}</td>
+          <td>{{ r.lieu_rdv or '—' }}</td>
+          <td>{% if r.statut_rdv == 'OK' %}<span class="badge bg-success">OK</span>{% else %}<span class="badge bg-danger">NOK</span>{% endif %}</td>
+          <td>{% if r.statut_engagement == 'OK' %}<span class="badge bg-success">OK</span>{% else %}<span class="badge bg-danger">NOK</span>{% endif %}</td>
+          <td class="text-end">
+            <a href="{{ url_for('rdv_form', rdv_id=r.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+            <form action="{{ url_for('rdv_delete', rdv_id=r.id) }}" method="post" class="d-inline" onsubmit="return confirm('Supprimer ce RDV ?');">
+              <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="10" class="text-center text-muted py-4">Aucun RDV sur cette période.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

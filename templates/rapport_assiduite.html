@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Rapport assiduité{% endblock %}
+{% block content %}
+<h2 class="mb-3"><i class="bi bi-graph-up"></i> Rapport d'assiduité à l'adoration <small class="text-muted">{{ periode_libelle }}</small></h2>
+
+<form method="get" class="card card-body shadow-sm mb-3">
+  <div class="row g-2 align-items-end">
+    <div class="col-md-2"><label class="form-label small">Période</label>
+      <select class="form-select" name="periode_type" onchange="this.form.submit()">
+        <option value="mois"  {% if periode_type == 'mois'  %}selected{% endif %}>Mois</option>
+        <option value="annee" {% if periode_type == 'annee' %}selected{% endif %}>Année</option>
+      </select></div>
+    <div class="col-md-2"><label class="form-label small">Année</label>
+      <input type="number" name="annee" class="form-control" value="{{ annee }}"></div>
+    {% if periode_type == 'mois' %}
+    <div class="col-md-2"><label class="form-label small">Mois</label>
+      <select class="form-select" name="mois">
+        {% for i in range(1,13) %}
+        <option value="{{ i }}" {% if mois == i %}selected{% endif %}>{{ mois_libelles[i-1] }}</option>
+        {% endfor %}
+      </select></div>
+    {% endif %}
+    <div class="col-md-4"><label class="form-label small">Disciple (optionnel)</label>
+      <select class="form-select" name="disciple_id">
+        <option value="">—</option>
+        {% for d in disciples %}
+        <option value="{{ d.id }}" {% if disciple_id == d.id|string %}selected{% endif %}>{{ d.nom_complet }} ({{ d.matricule }})</option>
+        {% endfor %}
+      </select></div>
+    <div class="col-md-2"><button class="btn btn-primary">Générer</button></div>
+  </div>
+  {% if periode_type == 'annee' %}
+  <small class="text-muted">NB : Pour l'année en cours, seuls les mois achevés sont pris en compte.</small>
+  {% endif %}
+</form>
+
+{% if stats_disciple %}
+<div class="card shadow-sm mb-3">
+  <div class="card-body">
+    <h5>Rapport membre (disciple)</h5>
+    <div class="row g-3">
+      <div class="col-md-4"><div class="card card-stat"><div class="card-body">
+        <h6 class="text-muted small">Adorations enregistrées</h6><h3>{{ stats_disciple.total_dim }}</h3></div></div></div>
+      <div class="col-md-4"><div class="card card-stat success"><div class="card-body">
+        <h6 class="text-muted small">Présences</h6><h3>{{ stats_disciple.nb_pres }} <small>({{ stats_disciple.taux_pres }} %)</small></h3></div></div></div>
+      <div class="col-md-4"><div class="card card-stat danger"><div class="card-body">
+        <h6 class="text-muted small">Absences</h6><h3>{{ stats_disciple.nb_abs }} <small>({{ stats_disciple.taux_abs }} %)</small></h3></div></div></div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h5>Rapport assemblée</h5>
+    <div class="row g-3">
+      <div class="col-md-4"><div class="card card-stat"><div class="card-body">
+        <h6 class="text-muted small">Dimanches enregistrés</h6><h3>{{ stats_assemblee.total_dim }}</h3></div></div></div>
+      <div class="col-md-4"><div class="card card-stat success"><div class="card-body">
+        <h6 class="text-muted small">Présences totales</h6><h3>{{ stats_assemblee.nb_pres }} <small>({{ stats_assemblee.taux_pres }} %)</small></h3></div></div></div>
+      <div class="col-md-4"><div class="card card-stat danger"><div class="card-body">
+        <h6 class="text-muted small">Absences totales</h6><h3>{{ stats_assemblee.nb_abs }} <small>({{ stats_assemblee.taux_abs }} %)</small></h3></div></div></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

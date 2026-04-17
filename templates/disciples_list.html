@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Disciples{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+  <h2><i class="bi bi-person-vcard"></i> Disciples</h2>
+  <a href="{{ url_for('disciple_form') }}" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Nouveau disciple</a>
+</div>
+
+<form method="get" class="mb-3">
+  <div class="input-group">
+    <input type="text" name="q" class="form-control" placeholder="Rechercher par nom, prénom, matricule, téléphone..." value="{{ q }}">
+    <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i> Rechercher</button>
+  </div>
+</form>
+
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Matricule</th><th>Nom complet</th><th>Tél.</th><th>Assemblée</th>
+          <th>Statut spirituel</th><th>Niveau</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in disciples %}
+        <tr>
+          <td><a href="{{ url_for('disciple_detail', disciple_id=d.id) }}" class="text-decoration-none"><strong>{{ d.matricule }}</strong></a></td>
+          <td>{{ d.nom_complet }}</td>
+          <td>{{ d.tel or '—' }}</td>
+          <td>{{ d.assemblee or '—' }}</td>
+          <td>
+            {% if d.repentance %}<span class="badge bg-success" title="Repentance">R</span>{% endif %}
+            {% if d.bapteme %}<span class="badge bg-info" title="Baptême">B</span>{% endif %}
+            {% if d.brisement_liens %}<span class="badge bg-warning" title="Brisement de liens">BL</span>{% endif %}
+            {% if d.formation_disciple %}<span class="badge bg-primary" title="Formation">F</span>{% endif %}
+          </td>
+          <td>{{ d.niveau_academique or '—' }}</td>
+          <td class="text-end">
+            <a href="{{ url_for('disciple_detail', disciple_id=d.id) }}" class="btn btn-sm btn-outline-secondary" title="Détails"><i class="bi bi-eye"></i></a>
+            <a href="{{ url_for('disciple_form', disciple_id=d.id) }}" class="btn btn-sm btn-outline-primary" title="Modifier"><i class="bi bi-pencil"></i></a>
+            <form action="{{ url_for('disciple_delete', disciple_id=d.id) }}" method="post" class="d-inline" onsubmit="return confirm('Supprimer {{ d.nom_complet }} ?');">
+              <button class="btn btn-sm btn-outline-danger" title="Supprimer"><i class="bi bi-trash"></i></button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-center text-muted py-4">Aucun disciple enregistré. <a href="{{ url_for('disciple_form') }}">Ajouter le premier</a>.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

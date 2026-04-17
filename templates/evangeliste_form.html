@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{% if e %}Modifier{% else %}Nouvel{% endif %} évangéliste{% endblock %}
+{% block content %}
+<h2 class="mb-3"><i class="bi bi-megaphone"></i> {% if e %}Modifier l'évangéliste{% else %}Nouvel évangéliste{% endif %}</h2>
+
+<form method="post">
+  <div class="card shadow-sm mb-3">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4"><label class="form-label">Nom *</label>
+          <input class="form-control" name="nom" required value="{{ e.nom if e else '' }}"></div>
+        <div class="col-md-4"><label class="form-label">Prénom(s) *</label>
+          <input class="form-control" name="prenom" required value="{{ e.prenom if e else '' }}"></div>
+        <div class="col-md-4"><label class="form-label">Téléphone</label>
+          <input class="form-control" name="tel" value="{{ e.tel if e else '' }}"></div>
+        <div class="col-md-4"><label class="form-label">Zone</label>
+          <input class="form-control" name="zone" value="{{ e.zone if e else '' }}"></div>
+        <div class="col-md-4"><label class="form-label">Sous-centre</label>
+          <input class="form-control" name="sous_centre" value="{{ e.sous_centre if e else '' }}"></div>
+        <div class="col-md-4"><label class="form-label">Assemblée</label>
+          <input class="form-control" name="assemblee" value="{{ e.assemblee if e else '' }}"></div>
+        <div class="col-md-4"><label class="form-label">Qualité</label>
+          <select class="form-select" name="qualite">
+            <option value="">—</option>
+            {% for q in ['Pasteur','Missionnaire','Disciple'] %}
+            <option value="{{ q }}" {% if e and e.qualite == q %}selected{% endif %}>{{ q }}</option>
+            {% endfor %}
+          </select></div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex gap-2 justify-content-end">
+    <a href="{{ url_for('evangelistes_list') }}" class="btn btn-outline-secondary">Annuler</a>
+    <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Enregistrer</button>
+  </div>
+</form>
+{% endblock %}

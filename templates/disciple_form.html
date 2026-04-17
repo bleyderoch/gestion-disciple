@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}{% if d %}Modifier{% else %}Nouveau{% endif %} disciple{% endblock %}
+{% block content %}
+<h2 class="mb-3"><i class="bi bi-person-vcard"></i> {% if d %}Modifier le disciple{% else %}Nouveau disciple{% endif %}</h2>
+
+<form method="post">
+<div class="card shadow-sm mb-3">
+  <div class="card-body form-section">
+
+    <h5>Identification</h5>
+    <div class="row g-3">
+      <div class="col-md-4"><label class="form-label">Matricule *</label>
+        <input class="form-control" name="matricule" required value="{{ d.matricule if d else '' }}"></div>
+      <div class="col-md-4"><label class="form-label">Nom *</label>
+        <input class="form-control" name="nom" required value="{{ d.nom if d else '' }}"></div>
+      <div class="col-md-4"><label class="form-label">Prénom(s) *</label>
+        <input class="form-control" name="prenom" required value="{{ d.prenom if d else '' }}"></div>
+      <div class="col-md-4"><label class="form-label">Téléphone</label>
+        <input class="form-control" name="tel" value="{{ d.tel if d else '' }}"></div>
+      <div class="col-md-8"><label class="form-label">Lieu d'habitation</label>
+        <input class="form-control" name="lieu_habitation" value="{{ d.lieu_habitation if d else '' }}"></div>
+      <div class="col-md-12"><label class="form-label">Lien vers plan du domicile (Google Drive, Dropbox, etc.)</label>
+        <input class="form-control" name="lien_plan_domicile" placeholder="https://..." value="{{ d.lien_plan_domicile if d else '' }}"></div>
+    </div>
+
+    <h5>Localisation ecclésiale</h5>
+    <div class="row g-3">
+      <div class="col-md-4"><label class="form-label">Zone</label>
+        <input class="form-control" name="zone" value="{{ d.zone if d else '' }}"></div>
+      <div class="col-md-4"><label class="form-label">Sous-centre</label>
+        <input class="form-control" name="sous_centre" value="{{ d.sous_centre if d else '' }}"></div>
+      <div class="col-md-4"><label class="form-label">Assemblée</label>
+        <input class="form-control" name="assemblee" value="{{ d.assemblee if d else '' }}"></div>
+    </div>
+
+    <h5>Faiseur de disciple</h5>
+    <div class="row g-3">
+      <div class="col-md-6"><label class="form-label">Nom du faiseur</label>
+        <input class="form-control" name="faiseur_nom" value="{{ d.faiseur_nom if d else '' }}"></div>
+      <div class="col-md-6"><label class="form-label">Contact du faiseur</label>
+        <input class="form-control" name="faiseur_contact" value="{{ d.faiseur_contact if d else '' }}"></div>
+    </div>
+
+    <h5>Mentore</h5>
+    <div class="row g-3">
+      <div class="col-md-3"><label class="form-label">Nom</label>
+        <input class="form-control" name="mentore_nom" value="{{ d.mentore_nom if d else '' }}"></div>
+      <div class="col-md-3"><label class="form-label">Prénom(s)</label>
+        <input class="form-control" name="mentore_prenom" value="{{ d.mentore_prenom if d else '' }}"></div>
+      <div class="col-md-3"><label class="form-label">Tél.</label>
+        <input class="form-control" name="mentore_tel" value="{{ d.mentore_tel if d else '' }}"></div>
+      <div class="col-md-3"><label class="form-label">Qualité</label>
+        <select class="form-select" name="mentore_qualite">
+          <option value="">—</option>
+          {% for q in ['Pasteur','Missionnaire','Disciple'] %}
+          <option value="{{ q }}" {% if d and d.mentore_qualite == q %}selected{% endif %}>{{ q }}</option>
+          {% endfor %}
+        </select></div>
+    </div>
+
+    <h5>Statut spirituel</h5>
+    <div class="row g-3">
+      <div class="col-md-3"><div class="form-check">
+        <input class="form-check-input" type="checkbox" name="repentance" id="repentance" {% if d and d.repentance %}checked{% endif %}>
+        <label class="form-check-label" for="repentance">Repentance</label></div></div>
+      <div class="col-md-3"><div class="form-check">
+        <input class="form-check-input" type="checkbox" name="bapteme" id="bapteme" {% if d and d.bapteme %}checked{% endif %}>
+        <label class="form-check-label" for="bapteme">Baptême</label></div></div>
+      <div class="col-md-3"><label class="form-label small">Date du baptême</label>
+        <input type="date" class="form-control" name="date_bapteme" value="{{ d.date_bapteme.isoformat() if d and d.date_bapteme else '' }}"></div>
+      <div class="col-md-3"><div class="form-check mt-4">
+        <input class="form-check-input" type="checkbox" name="brisement_liens" id="brisement" {% if d and d.brisement_liens %}checked{% endif %}>
+        <label class="form-check-label" for="brisement">Brisement de liens</label></div></div>
+      <div class="col-md-3"><div class="form-check">
+        <input class="form-check-input" type="checkbox" name="formation_disciple" id="formation" {% if d and d.formation_disciple %}checked{% endif %}>
+        <label class="form-check-label" for="formation">Formation du disciple</label></div></div>
+    </div>
+
+    <h5>Niveau académique</h5>
+    <div class="row g-3">
+      <div class="col-md-4"><label class="form-label">Niveau</label>
+        <select class="form-select" name="niveau_academique">
+          <option value="">—</option>
+          {% for q in ['Analphabète','CM2','BAC','Études supérieures'] %}
+          <option value="{{ q }}" {% if d and d.niveau_academique == q %}selected{% endif %}>{{ q }}</option>
+          {% endfor %}
+        </select></div>
+      <div class="col-md-5"><label class="form-label">Précisions (avec/sans CPE, avec/sans BAC, diplôme...)</label>
+        <input class="form-control" name="details_niveau" value="{{ d.details_niveau if d else '' }}"></div>
+      <div class="col-md-3"><label class="form-label">Lien CV</label>
+        <input class="form-control" name="lien_cv" placeholder="https://..." value="{{ d.lien_cv if d else '' }}"></div>
+    </div>
+  </div>
+</div>
+
+<div class="card shadow-sm mb-3">
+  <div class="card-body">
+    <h5>Liste des 10 amis proches</h5>
+    <div class="table-responsive">
+      <table class="table table-sm">
+        <thead><tr><th>#</th><th>Nom et prénoms</th><th>Tél.</th><th>Lieu d'habitation</th></tr></thead>
+        <tbody>
+          {% for i in range(10) %}
+            {% set ami = d.amis.all()[i] if d and d.amis.count() > i else None %}
+            <tr>
+              <td class="text-muted">{{ i+1 }}</td>
+              <td><input class="form-control form-control-sm" name="ami_nom_{{ i }}" value="{{ ami.nom_prenoms if ami else '' }}"></td>
+              <td><input class="form-control form-control-sm" name="ami_tel_{{ i }}" value="{{ ami.tel if ami else '' }}"></td>
+              <td><input class="form-control form-control-sm" name="ami_lieu_{{ i }}" value="{{ ami.lieu_habitation if ami else '' }}"></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card shadow-sm mb-3">
+  <div class="card-body">
+    <h5>Liste des 5 familles proches</h5>
+    <div class="table-responsive">
+      <table class="table table-sm">
+        <thead><tr><th>#</th><th>Nom famille (Père / Mère)</th><th>Tél.</th><th>Lieu d'habitation</th></tr></thead>
+        <tbody>
+          {% for i in range(5) %}
+            {% set fam = d.familles.all()[i] if d and d.familles.count() > i else None %}
+            <tr>
+              <td class="text-muted">{{ i+1 }}</td>
+              <td><input class="form-control form-control-sm" name="fam_nom_{{ i }}" value="{{ fam.nom_famille if fam else '' }}"></td>
+              <td><input class="form-control form-control-sm" name="fam_tel_{{ i }}" value="{{ fam.tel if fam else '' }}"></td>
+              <td><input class="form-control form-control-sm" name="fam_lieu_{{ i }}" value="{{ fam.lieu_habitation if fam else '' }}"></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="sticky-actions d-flex gap-2 justify-content-end">
+  <a href="{{ url_for('disciples_list') }}" class="btn btn-outline-secondary">Annuler</a>
+  <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Enregistrer</button>
+</div>
+</form>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Tableau de bord{% endblock %}
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-speedometer2"></i> Tableau de bord <small class="text-muted">Semaine {{ semaine }} — {{ annee }}</small></h2>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="card card-stat shadow-sm">
+      <div class="card-body">
+        <h6 class="text-muted text-uppercase small">Disciples</h6>
+        <h2 class="mb-0">{{ nb_disciples }}</h2>
+        <a href="{{ url_for('disciples_list') }}" class="small">Voir la liste →</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card card-stat success shadow-sm">
+      <div class="card-body">
+        <h6 class="text-muted text-uppercase small">Évangélistes</h6>
+        <h2 class="mb-0">{{ nb_evangelistes }}</h2>
+        <a href="{{ url_for('evangelistes_list') }}" class="small">Voir la liste →</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card card-stat warning shadow-sm">
+      <div class="card-body">
+        <h6 class="text-muted text-uppercase small">RDV (semaine)</h6>
+        <h2 class="mb-0">{{ rdv_ok }}/{{ rdv_total }}</h2>
+        <div class="small text-muted">Taux : {{ taux_rdv }} %</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card card-stat danger shadow-sm">
+      <div class="card-body">
+        <h6 class="text-muted text-uppercase small">Engagements (semaine)</h6>
+        <h2 class="mb-0">{{ eng_ok }}/{{ rdv_total }}</h2>
+        <div class="small text-muted">Taux : {{ taux_eng }} %</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5><i class="bi bi-check2-square"></i> Dernière adoration enregistrée</h5>
+        {% if pres_total %}
+          <p>Présences : <strong>{{ pres_ok }} / {{ pres_total }}</strong> — Taux : <strong>{{ taux_presence }} %</strong></p>
+        {% else %}
+          <p class="text-muted">Aucune présence enregistrée pour le dimanche en cours.</p>
+        {% endif %}
+        <a href="{{ url_for('adoration') }}" class="btn btn-sm btn-outline-primary">Enregistrer les présences</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5><i class="bi bi-lightning"></i> Actions rapides</h5>
+        <div class="d-grid gap-2">
+          <a href="{{ url_for('disciple_form') }}" class="btn btn-outline-primary"><i class="bi bi-person-plus"></i> Nouveau disciple</a>
+          <a href="{{ url_for('evangeliste_form') }}" class="btn btn-outline-success"><i class="bi bi-megaphone"></i> Nouvel évangéliste</a>
+          <a href="{{ url_for('rdv_form') }}" class="btn btn-outline-warning"><i class="bi bi-calendar-plus"></i> Nouveau RDV évangélisation</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
